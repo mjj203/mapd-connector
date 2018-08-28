@@ -45,7 +45,6 @@ ttypes.TEncodingType = {
   'GEOINT' : 6
 };
 ttypes.TExecuteMode = {
-  'HYBRID' : 0,
   'GPU' : 1,
   'CPU' : 2
 };
@@ -5595,12 +5594,20 @@ TRenderStepResult.prototype.write = function(output) {
 var TDatabasePermissions = module.exports.TDatabasePermissions = function(args) {
   this.create_ = null;
   this.delete_ = null;
+  this.view_sql_editor_ = null;
+  this.access_ = null;
   if (args) {
     if (args.create_ !== undefined && args.create_ !== null) {
       this.create_ = args.create_;
     }
     if (args.delete_ !== undefined && args.delete_ !== null) {
       this.delete_ = args.delete_;
+    }
+    if (args.view_sql_editor_ !== undefined && args.view_sql_editor_ !== null) {
+      this.view_sql_editor_ = args.view_sql_editor_;
+    }
+    if (args.access_ !== undefined && args.access_ !== null) {
+      this.access_ = args.access_;
     }
   }
 };
@@ -5632,6 +5639,20 @@ TDatabasePermissions.prototype.read = function(input) {
         input.skip(ftype);
       }
       break;
+      case 3:
+      if (ftype == Thrift.Type.BOOL) {
+        this.view_sql_editor_ = input.readBool();
+      } else {
+        input.skip(ftype);
+      }
+      break;
+      case 4:
+      if (ftype == Thrift.Type.BOOL) {
+        this.access_ = input.readBool();
+      } else {
+        input.skip(ftype);
+      }
+      break;
       default:
         input.skip(ftype);
     }
@@ -5651,6 +5672,16 @@ TDatabasePermissions.prototype.write = function(output) {
   if (this.delete_ !== null && this.delete_ !== undefined) {
     output.writeFieldBegin('delete_', Thrift.Type.BOOL, 2);
     output.writeBool(this.delete_);
+    output.writeFieldEnd();
+  }
+  if (this.view_sql_editor_ !== null && this.view_sql_editor_ !== undefined) {
+    output.writeFieldBegin('view_sql_editor_', Thrift.Type.BOOL, 3);
+    output.writeBool(this.view_sql_editor_);
+    output.writeFieldEnd();
+  }
+  if (this.access_ !== null && this.access_ !== undefined) {
+    output.writeFieldBegin('access_', Thrift.Type.BOOL, 4);
+    output.writeBool(this.access_);
     output.writeFieldEnd();
   }
   output.writeFieldStop();
